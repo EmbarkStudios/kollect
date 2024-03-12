@@ -100,7 +100,8 @@ use super::linear_map::LinearMap;
 /// ```
 ///
 /// [lexographical]: core::cmp::Ord#lexographical-comparison
-#[derive(Clone)]
+#[derive(Clone, Hash)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 pub struct LinearSet<T> {
     map: LinearMap<T, ()>,
 }
