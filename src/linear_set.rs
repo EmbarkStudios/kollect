@@ -672,6 +672,18 @@ where
 
 impl<T> Eq for LinearSet<T> where T: Eq {}
 
+impl<T: Eq + Ord> PartialOrd for LinearSet<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.map.cmp(&other.map))
+    }
+}
+
+impl<T: Eq + Ord> Ord for LinearSet<T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.map.cmp(&other.map)
+    }
+}
+
 impl<T> fmt::Debug for LinearSet<T>
 where
     T: Eq + fmt::Debug,
