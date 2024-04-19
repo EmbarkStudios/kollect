@@ -522,18 +522,18 @@ where
 }
 
 /// You can use this with the `#[serde(with = "module")]` [field attribute] to make an [`UnorderedMap`]
-/// serialize/deserialize as a sequence of `(k, v)` elements, rather than as a map in the serde data model.
-/// This can be helpful when serializing to JSON because true JSON maps are only allowed to be keyed by strings,
+/// serialize/deserialize as a native map in the serde data model rather than a sequence of `(k, v)` pairs.
+/// We choose to serialize as sequences by default because true JSON maps are only allowed to be keyed by strings,
 /// and thus the key types of Rust maps serialized to JSON maps are quite limited. Worse, this limitation only shows up
-/// as a runtime panic! With this adapter to serialize as sequence, you should be able to use any key type that impls `Serialize`.
+/// as a runtime panic! If you want to defeat this behavior and actually serialize as a native map, use this adapter.
 ///
 /// [field attribute]: https://serde.rs/field-attrs.html#with
 #[cfg(feature = "serde")]
-pub mod serde_as_seq {
+pub mod serde_as_map {
     use super::*;
 
     /// You can use this with the `#[serde(serialize_with = "function")]` [field attribute] to make an [`UnorderedMap`]
-    /// serialize as a sequence of `(k, v)` pairs, rather than a map in the serde data model. See the module-level docs for more.
+    /// serialize as a map in the serde data model rather than a sequence of `(k, v)` pairs. See the module-level docs for more.
     ///
     /// [field attribute]: https://serde.rs/field-attrs.html#serialize_with
     pub fn serialize<K, V, RS, S>(
@@ -545,16 +545,12 @@ pub mod serde_as_seq {
         V: serde::Serialize,
         S: serde::Serializer,
     {
-        use serde::ser::SerializeSeq;
-        let mut seq = serializer.serialize_seq(Some(map.inner.len()))?;
-        for elt in map.inner.iter() {
-            seq.serialize_element(&elt)?;
-        }
-        seq.end()
+        use serde::Serialize;
+        map.inner.serialize(serializer)
     }
 
     /// You can use this with the `#[serde(deserialize_with = "function")]` [field attribute] to deserialize a [`UnorderedMap`]
-    /// from a sequence of `(k, v)` pairs, rather than a map in the serde data model. See the module-level docs for more.
+    /// from the native serde data model map type rather than a sequence of `(k, v)` pairs. See the module-level docs for more.
     ///
     /// [field attribute]: https://serde.rs/field-attrs.html#serialize_with
     pub fn deserialize<'de, K, V, S, D>(deserializer: D) -> Result<UnorderedMap<K, V, S>, D::Error>
@@ -562,6 +558,45 @@ pub mod serde_as_seq {
         K: serde::Deserialize<'de> + Eq + Hash,
         V: serde::Deserialize<'de>,
         S: BuildHasher + Default,
+        D: serde::Deserializer<'de>,
+    {
+        use serde::Deserialize;
+        Ok(UnorderedMap {
+            inner: HashMap::<K, V, S>::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<K, V, RS> serde::Serialize for UnorderedMap<K, V, RS>
+where
+    K: serde::Serialize,
+    V: serde::Serialize,
+{
+    #[inline]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeSeq;
+        let mut seq = serializer.serialize_seq(Some(self.inner.len()))?;
+        for elt in self.inner.iter() {
+            seq.serialize_element(&elt)?;
+        }
+        seq.end()
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, K, V, S> serde::Deserialize<'de> for UnorderedMap<K, V, S>
+where
+    K: serde::Deserialize<'de> + Eq + Hash,
+    V: serde::Deserialize<'de>,
+    S: BuildHasher + Default,
+{
+    #[inline]
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
         D: serde::Deserializer<'de>,
     {
         use core::marker::PhantomData;
@@ -598,40 +633,7 @@ pub mod serde_as_seq {
         }
 
         let map = deserializer.deserialize_seq(HashMapSeqVisitor::<K, V, S>(PhantomData))?;
-        Ok(UnorderedMap { inner: map })
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<K, V, RS> serde::Serialize for UnorderedMap<K, V, RS>
-where
-    K: serde::Serialize,
-    V: serde::Serialize,
-{
-    #[inline]
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.inner.serialize(serializer)
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de, K, V, S> serde::Deserialize<'de> for UnorderedMap<K, V, S>
-where
-    K: serde::Deserialize<'de> + Eq + Hash,
-    V: serde::Deserialize<'de>,
-    S: BuildHasher + Default,
-{
-    #[inline]
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        Ok(Self {
-            inner: HashMap::<K, V, S>::deserialize(deserializer)?,
-        })
+        Ok(Self { inner: map })
     }
 }
 

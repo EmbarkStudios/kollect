@@ -320,7 +320,7 @@ where
     where
         Q: Hash + Equivalent<T>,
     {
-        self.inner.remove(value)
+        self.inner.swap_remove(value)
     }
 
     /// See [`IndexSet::swap_remove`]
@@ -347,7 +347,7 @@ where
     where
         Q: Hash + Equivalent<T>,
     {
-        self.inner.take(value)
+        self.inner.swap_take(value)
     }
 
     /// See [`IndexSet::swap_take`]

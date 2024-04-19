@@ -997,22 +997,19 @@ fn assert_covariance() {
     }
 }
 
-/// You can use this with the `#[serde(with = "module")]` [field attribute] to make an [`LinearMap`]
-/// serialize/deserialize as a sequence of `(k, v)` elements, rather than as a map in the serde data model.
-/// This can be helpful when serializing to JSON because true JSON maps are only allowed to be keyed by strings,
+/// You can use this with the `#[serde(with = "module")]` [field attribute] to make a [`LinearMap`]
+/// serialize/deserialize as a native map in the serde data model rather than a sequence of `(k, v)` pairs.
+/// We choose to serialize as sequences by default because true JSON maps are only allowed to be keyed by strings,
 /// and thus the key types of Rust maps serialized to JSON maps are quite limited. Worse, this limitation only shows up
-/// as a runtime panic! With this adapter to serialize as sequence, you should be able to use any key type that impls `Serialize`.
+/// as a runtime panic! If you want to defeat this behavior and actually serialize as a native map, use this adapter.
 ///
 /// [field attribute]: https://serde.rs/field-attrs.html#with
 #[cfg(feature = "serde")]
-pub mod serde_as_seq {
-    use serde::Deserialize;
-    use serde::Serialize;
-
+pub mod serde_as_map {
     use super::*;
 
     /// You can use this with the `#[serde(serialize_with = "function")]` [field attribute] to make an [`LinearMap`]
-    /// serialize as a sequence of `(k, v)` pairs, rather than a map in the serde data model. See the module-level docs for more.
+    /// serialize as a map in the serde data model rather than a sequence of `(k, v)` pairs. See the module-level docs for more.
     ///
     /// [field attribute]: https://serde.rs/field-attrs.html#serialize_with
     #[inline]
@@ -1022,11 +1019,17 @@ pub mod serde_as_seq {
         V: serde::Serialize,
         S: serde::Serializer,
     {
-        map.storage.serialize(serializer)
+        use serde::ser::SerializeMap;
+
+        let mut ser_map = serializer.serialize_map(Some(map.len()))?;
+        for (k, v) in map {
+            ser_map.serialize_entry(k, v)?;
+        }
+        ser_map.end()
     }
 
     /// You can use this with the `#[serde(deserialize_with = "function")]` [field attribute] to deserialize a [`LinearMap`]
-    /// from a sequence of `(k, v)` pairs, rather than a map in the serde data model. See the module-level docs for more.
+    /// from the native serde data model map type rather than a sequence of `(k, v)` pairs. See the module-level docs for more.
     ///
     /// [field attribute]: https://serde.rs/field-attrs.html#serialize_with
     #[inline]
@@ -1034,43 +1037,6 @@ pub mod serde_as_seq {
     where
         K: serde::Deserialize<'de> + Eq,
         V: serde::Deserialize<'de>,
-        D: serde::Deserializer<'de>,
-    {
-        let storage = Vec::<(K, V)>::deserialize(deserializer)?;
-        Ok(LinearMap { storage })
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<K, V> serde::Serialize for LinearMap<K, V>
-where
-    K: serde::Serialize + Eq,
-    V: serde::Serialize,
-{
-    #[inline]
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeMap;
-
-        let mut ser_map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self {
-            ser_map.serialize_entry(k, v)?;
-        }
-        ser_map.end()
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de, K, V> serde::Deserialize<'de> for LinearMap<K, V>
-where
-    K: serde::Deserialize<'de> + Eq,
-    V: serde::Deserialize<'de>,
-{
-    #[inline]
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
         D: serde::Deserializer<'de>,
     {
         use core::marker::PhantomData;
@@ -1105,6 +1071,37 @@ where
         }
 
         deserializer.deserialize_map(LinearMapVisitor::<K, V>(PhantomData))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<K, V> serde::Serialize for LinearMap<K, V>
+where
+    K: serde::Serialize + Eq,
+    V: serde::Serialize,
+{
+    #[inline]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.storage.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, K, V> serde::Deserialize<'de> for LinearMap<K, V>
+where
+    K: serde::Deserialize<'de> + Eq,
+    V: serde::Deserialize<'de>,
+{
+    #[inline]
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let storage = Vec::<(K, V)>::deserialize(deserializer)?;
+        Ok(Self { storage })
     }
 }
 
