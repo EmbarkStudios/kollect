@@ -143,8 +143,7 @@ impl<T: Eq> LinearSet<T> {
     /// let mut set: LinearSet<i32> = LinearSet::new();
     /// ```
     #[inline]
-
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             map: LinearMap::new(),
         }

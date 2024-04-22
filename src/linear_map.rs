@@ -109,7 +109,7 @@ impl<K, V> LinearMap<K, V> {
 impl<K: Eq, V> LinearMap<K, V> {
     /// Creates an empty map. This method does not allocate.
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self { storage: vec![] }
     }
 

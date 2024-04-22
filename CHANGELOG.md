@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- `LinearMap::new` and `LinearSet::new` are now `const`
+
 ## `0.4.1`
 
 - Fixed `linear_map::serde_as_seq` to be named `serde_as_map` as it should.
