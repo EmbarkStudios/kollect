@@ -145,3 +145,9 @@ pub(crate) static STATIC_RANDOM_STATE: ahash::RandomState = ahash::RandomState::
     0x98f0a276c462acc1,
     0xe2d6368e09c9c079,
 );
+
+#[cold]
+#[inline(never)]
+fn panic_key_already_existed() {
+    panic!("Failed to insert to map as the key already existed");
+}

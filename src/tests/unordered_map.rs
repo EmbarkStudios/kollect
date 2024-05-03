@@ -123,3 +123,11 @@ fn eq_hash_equivalence() {
     assert_eq!(b_hash, c_hash);
     assert_eq!(a_hash, c_hash);
 }
+
+#[test]
+#[should_panic(expected = "Failed to insert to map as the key already existed")]
+fn insert_unique() {
+    let mut map = UnorderedMap::new();
+    map.insert_unique("alpha", 1);
+    map.insert_unique("alpha", 2);
+}

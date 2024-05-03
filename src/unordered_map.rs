@@ -301,6 +301,15 @@ where
         self.inner.insert(k, v)
     }
 
+    /// Same as [`UnorderedMap::insert`] but will panic if the key inserted
+    /// is not unique
+    #[inline]
+    pub fn insert_unique(&mut self, k: K, v: V) {
+        if self.inner.insert(k, v).is_some() {
+            crate::panic_key_already_existed();
+        }
+    }
+
     /// See [`HashMap::remove`]
     #[inline]
     pub fn remove<Q: ?Sized>(&mut self, k: &Q) -> Option<V>

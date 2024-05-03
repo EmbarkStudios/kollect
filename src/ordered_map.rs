@@ -325,6 +325,15 @@ where
         self.inner.insert(k, v)
     }
 
+    /// Same as [`OrderedMap::insert`] but will panic if the key inserted
+    /// is not unique
+    #[inline]
+    pub fn insert_unique(&mut self, k: K, v: V) {
+        if self.inner.insert(k, v).is_some() {
+            crate::panic_key_already_existed();
+        }
+    }
+
     /// See [`IndexMap::insert_full`]
     #[inline]
     pub fn insert_full(&mut self, key: K, value: V) -> (usize, Option<V>) {
