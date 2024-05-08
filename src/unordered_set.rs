@@ -247,20 +247,20 @@ where
 
     /// See [`HashSet::contains`]
     #[inline]
-    pub fn contains<Q: ?Sized>(&self, value: &Q) -> bool
+    pub fn contains<Q>(&self, value: &Q) -> bool
     where
         T: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.contains(value)
     }
 
     /// See [`HashSet::get`]
     #[inline]
-    pub fn get<Q: ?Sized>(&self, value: &Q) -> Option<&T>
+    pub fn get<Q>(&self, value: &Q) -> Option<&T>
     where
         T: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.get(value)
     }
@@ -295,20 +295,20 @@ where
 
     /// See [`HashSet::remove`]
     #[inline]
-    pub fn remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn remove<Q>(&mut self, value: &Q) -> bool
     where
         T: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.remove(value)
     }
 
     /// See [`HashSet::take`]
     #[inline]
-    pub fn take<Q: ?Sized>(&mut self, value: &Q) -> Option<T>
+    pub fn take<Q>(&mut self, value: &Q) -> Option<T>
     where
         T: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.take(value)
     }

@@ -267,30 +267,30 @@ where
 
     /// See [`HashMap::get`]
     #[inline]
-    pub fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
+    pub fn get<Q>(&self, k: &Q) -> Option<&V>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.get(k)
     }
 
     /// See [`HashMap::get_key_value`]
     #[inline]
-    pub fn get_key_value<Q: ?Sized>(&self, k: &Q) -> Option<(&K, &V)>
+    pub fn get_key_value<Q>(&self, k: &Q) -> Option<(&K, &V)>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.get_key_value(k)
     }
 
     /// See [`HashMap::get_mut`]
     #[inline]
-    pub fn get_mut<Q: ?Sized>(&mut self, k: &Q) -> Option<&mut V>
+    pub fn get_mut<Q>(&mut self, k: &Q) -> Option<&mut V>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.get_mut(k)
     }
@@ -312,20 +312,20 @@ where
 
     /// See [`HashMap::remove`]
     #[inline]
-    pub fn remove<Q: ?Sized>(&mut self, k: &Q) -> Option<V>
+    pub fn remove<Q>(&mut self, k: &Q) -> Option<V>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.remove(k)
     }
 
     /// See [`HashMap::contains_key`]
     #[inline]
-    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,
-        Q: Hash + Eq,
+        Q: ?Sized + Hash + Eq,
     {
         self.inner.contains_key(key)
     }
@@ -488,10 +488,10 @@ impl<'a, K, V, S> IntoIterator for &'a mut UnorderedMap<K, V, S> {
     }
 }
 
-impl<K, Q: ?Sized, V, S> Index<&Q> for UnorderedMap<K, V, S>
+impl<K, Q, V, S> Index<&Q> for UnorderedMap<K, V, S>
 where
     K: Eq + Hash + Borrow<Q>,
-    Q: Eq + Hash,
+    Q: ?Sized + Eq + Hash,
     S: BuildHasher,
 {
     type Output = V;

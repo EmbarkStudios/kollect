@@ -470,10 +470,10 @@ where
     /// assert_eq!(set.contains(&4), false);
     /// ```
     #[inline]
-    pub fn contains<Q: ?Sized>(&self, value: &Q) -> bool
+    pub fn contains<Q>(&self, value: &Q) -> bool
     where
         T: Borrow<Q>,
-        Q: Eq,
+        Q: ?Sized + Eq,
     {
         self.map.contains_key(value)
     }
@@ -590,10 +590,10 @@ where
     /// assert_eq!(set.remove(&2), false);
     /// ```
     #[inline]
-    pub fn remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn remove<Q>(&mut self, value: &Q) -> bool
     where
         T: Borrow<Q>,
-        Q: Eq,
+        Q: ?Sized + Eq,
     {
         self.map.remove(value).is_some()
     }
@@ -617,10 +617,10 @@ where
     /// assert_eq!(set.remove(&2), false);
     /// ```
     #[inline]
-    pub fn shift_remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn shift_remove<Q>(&mut self, value: &Q) -> bool
     where
         T: Borrow<Q>,
-        Q: Eq,
+        Q: ?Sized + Eq,
     {
         self.map.shift_remove(value).is_some()
     }

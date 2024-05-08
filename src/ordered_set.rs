@@ -268,36 +268,36 @@ where
 
     /// See [`IndexSet::contains`]
     #[inline]
-    pub fn contains<Q: ?Sized>(&self, value: &Q) -> bool
+    pub fn contains<Q>(&self, value: &Q) -> bool
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.contains(value)
     }
 
     /// See [`IndexSet::get`]
     #[inline]
-    pub fn get<Q: ?Sized>(&self, value: &Q) -> Option<&T>
+    pub fn get<Q>(&self, value: &Q) -> Option<&T>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.get(value)
     }
 
     /// See [`IndexSet::get_full`]
     #[inline]
-    pub fn get_full<Q: ?Sized>(&self, value: &Q) -> Option<(usize, &T)>
+    pub fn get_full<Q>(&self, value: &Q) -> Option<(usize, &T)>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.get_full(value)
     }
 
     /// See [`IndexSet::get_index_of`]
     #[inline]
-    pub fn get_index_of<Q: ?Sized>(&self, value: &Q) -> Option<usize>
+    pub fn get_index_of<Q>(&self, value: &Q) -> Option<usize>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.get_index_of(value)
     }
@@ -316,72 +316,72 @@ where
 
     /// See [`IndexSet::remove`]
     #[inline]
-    pub fn remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn remove<Q>(&mut self, value: &Q) -> bool
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.swap_remove(value)
     }
 
     /// See [`IndexSet::swap_remove`]
     #[inline]
-    pub fn swap_remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn swap_remove<Q>(&mut self, value: &Q) -> bool
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.swap_remove(value)
     }
 
     /// See [`IndexSet::shift_remove`]
     #[inline]
-    pub fn shift_remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn shift_remove<Q>(&mut self, value: &Q) -> bool
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.shift_remove(value)
     }
 
     /// See [`IndexSet::take`]
     #[inline]
-    pub fn take<Q: ?Sized>(&mut self, value: &Q) -> Option<T>
+    pub fn take<Q>(&mut self, value: &Q) -> Option<T>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.swap_take(value)
     }
 
     /// See [`IndexSet::swap_take`]
     #[inline]
-    pub fn swap_take<Q: ?Sized>(&mut self, value: &Q) -> Option<T>
+    pub fn swap_take<Q>(&mut self, value: &Q) -> Option<T>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.swap_take(value)
     }
 
     /// See [`IndexSet::shift_take`]
     #[inline]
-    pub fn shift_take<Q: ?Sized>(&mut self, value: &Q) -> Option<T>
+    pub fn shift_take<Q>(&mut self, value: &Q) -> Option<T>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.shift_take(value)
     }
 
     /// See [`IndexSet::swap_remove_full`]
     #[inline]
-    pub fn swap_remove_full<Q: ?Sized>(&mut self, value: &Q) -> Option<(usize, T)>
+    pub fn swap_remove_full<Q>(&mut self, value: &Q) -> Option<(usize, T)>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.swap_remove_full(value)
     }
 
     /// See [`IndexSet::shift_remove_full`]
     #[inline]
-    pub fn shift_remove_full<Q: ?Sized>(&mut self, value: &Q) -> Option<(usize, T)>
+    pub fn shift_remove_full<Q>(&mut self, value: &Q) -> Option<(usize, T)>
     where
-        Q: Hash + Equivalent<T>,
+        Q: ?Sized + Hash + Equivalent<T>,
     {
         self.inner.shift_remove_full(value)
     }

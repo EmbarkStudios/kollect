@@ -261,60 +261,60 @@ where
 
     /// See [`IndexMap::get`]
     #[inline]
-    pub fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
+    pub fn get<Q>(&self, k: &Q) -> Option<&V>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get(k)
     }
 
     /// See [`IndexMap::get_key_value`]
     #[inline]
-    pub fn get_key_value<Q: ?Sized>(&self, k: &Q) -> Option<(&K, &V)>
+    pub fn get_key_value<Q>(&self, k: &Q) -> Option<(&K, &V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get_key_value(k)
     }
 
     /// See [`IndexMap::get_full`]
-    pub fn get_full<Q: ?Sized>(&self, key: &Q) -> Option<(usize, &K, &V)>
+    pub fn get_full<Q>(&self, key: &Q) -> Option<(usize, &K, &V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get_full(key)
     }
 
     /// See [`IndexMap::get_mut`]
     #[inline]
-    pub fn get_mut<Q: ?Sized>(&mut self, k: &Q) -> Option<&mut V>
+    pub fn get_mut<Q>(&mut self, k: &Q) -> Option<&mut V>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get_mut(k)
     }
 
     /// See [`IndexMap::get_full`]
-    pub fn get_full_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(usize, &K, &mut V)>
+    pub fn get_full_mut<Q>(&mut self, key: &Q) -> Option<(usize, &K, &mut V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get_full_mut(key)
     }
     /// See [`IndexMap::contains_key`]
     #[inline]
-    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.contains_key(key)
     }
 
     /// See [`IndexMap::get_index_of`]
     #[inline]
-    pub fn get_index_of<Q: ?Sized>(&self, key: &Q) -> Option<usize>
+    pub fn get_index_of<Q>(&self, key: &Q) -> Option<usize>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.get_index_of(key)
     }
@@ -346,9 +346,9 @@ where
     /// preserve the order of the keys in the map, use `.shift_remove_entry(key)`
     /// instead.
     #[inline]
-    pub fn remove<Q: ?Sized>(&mut self, k: &Q) -> Option<V>
+    pub fn remove<Q>(&mut self, k: &Q) -> Option<V>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.swap_remove(k)
     }
@@ -359,63 +359,63 @@ where
     /// preserve the order of the keys in the map, use `.shift_remove_entry(key)`
     /// instead.
     #[inline]
-    pub fn remove_entry<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
+    pub fn remove_entry<Q>(&mut self, key: &Q) -> Option<(K, V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.swap_remove_entry(key)
     }
 
     /// See [`IndexMap::swap_remove`]
     #[inline]
-    pub fn swap_remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V>
+    pub fn swap_remove<Q>(&mut self, key: &Q) -> Option<V>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.swap_remove(key)
     }
 
     /// See [`IndexMap::swap_remove_entry`]
     #[inline]
-    pub fn swap_remove_entry<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
+    pub fn swap_remove_entry<Q>(&mut self, key: &Q) -> Option<(K, V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.swap_remove_entry(key)
     }
 
     /// See [`IndexMap::swap_remove_full`]
     #[inline]
-    pub fn swap_remove_full<Q: ?Sized>(&mut self, key: &Q) -> Option<(usize, K, V)>
+    pub fn swap_remove_full<Q>(&mut self, key: &Q) -> Option<(usize, K, V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.swap_remove_full(key)
     }
 
     /// See [`IndexMap::shift_remove`]
     #[inline]
-    pub fn shift_remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V>
+    pub fn shift_remove<Q>(&mut self, key: &Q) -> Option<V>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.shift_remove(key)
     }
 
     /// See [`IndexMap::shift_remove_entry`]
     #[inline]
-    pub fn shift_remove_entry<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
+    pub fn shift_remove_entry<Q>(&mut self, key: &Q) -> Option<(K, V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.shift_remove_entry(key)
     }
 
     /// See [`IndexMap::shift_remove_full`]
     #[inline]
-    pub fn shift_remove_full<Q: ?Sized>(&mut self, key: &Q) -> Option<(usize, K, V)>
+    pub fn shift_remove_full<Q>(&mut self, key: &Q) -> Option<(usize, K, V)>
     where
-        Q: Hash + Equivalent<K>,
+        Q: ?Sized + Hash + Equivalent<K>,
     {
         self.inner.shift_remove_full(key)
     }
