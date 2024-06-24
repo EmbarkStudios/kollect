@@ -999,7 +999,7 @@ where
 
 impl<'a, K> Clone for Iter<'a, K> {
     #[inline]
-    fn clone(&self) -> Iter<'a, K> {
+    fn clone(&self) -> Self {
         Iter {
             iter: self.iter.clone(),
         }
@@ -1083,7 +1083,7 @@ impl<'a, K> ExactSizeIterator for Drain<'a, K> {
 
 impl<'a, T> Clone for Intersection<'a, T> {
     #[inline]
-    fn clone(&self) -> Intersection<'a, T> {
+    fn clone(&self) -> Self {
         Intersection {
             iter: self.iter.clone(),
             ..*self
@@ -1120,7 +1120,7 @@ where
 
 impl<'a, T> Clone for Difference<'a, T> {
     #[inline]
-    fn clone(&self) -> Difference<'a, T> {
+    fn clone(&self) -> Self {
         Difference {
             iter: self.iter.clone(),
             ..*self
@@ -1157,7 +1157,7 @@ where
 
 impl<'a, T> Clone for SymmetricDifference<'a, T> {
     #[inline]
-    fn clone(&self) -> SymmetricDifference<'a, T> {
+    fn clone(&self) -> Self {
         SymmetricDifference {
             iter: self.iter.clone(),
         }
@@ -1182,7 +1182,7 @@ where
 
 impl<'a, T> Clone for Union<'a, T> {
     #[inline]
-    fn clone(&self) -> Union<'a, T> {
+    fn clone(&self) -> Self {
         Union {
             iter: self.iter.clone(),
         }
