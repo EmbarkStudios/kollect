@@ -5,21 +5,21 @@
 //! # Provided Collections
 //!
 //! - [`LinearMap`], useful when you want a collection that behaves as a key-value map but you will only ever have
-//! up to a few tens of elements. For small numbers of elements and small size of contained key/value types, this
-//! will likely be faster and take up less memory than other map types, but its random access operations have O(len)
-//! complexity rather than O(1) as with hash-based maps.
+//!   up to a few tens of elements. For small numbers of elements and small size of contained key/value types, this
+//!   will likely be faster and take up less memory than other map types, but its random access operations have O(len)
+//!   complexity rather than O(1) as with hash-based maps.
 //! - [`UnorderedMap`], useful when you want a general-purpose key-value map, you plan to do random access
-//! lookup by key more frequently than iteration of the contained elements, and you don't care about order of
-//! those elements.
+//!   lookup by key more frequently than iteration of the contained elements, and you don't care about order of
+//!   those elements.
 //! - [`OrderedMap`], useful when you want a key-value map including a set order of element pairs, or when
-//! you plan to iterate over the contained elements more frequently than you do random access lookup by key.
+//!   you plan to iterate over the contained elements more frequently than you do random access lookup by key.
 //!
 //! - [`LinearSet`], useful in the same situation as [`LinearMap`] but when you're operating on a set of values rather
-//! than a map.
+//!   than a map.
 //! - [`UnorderedSet`], useful when you want set-like operations, will do more random access than iteration,
-//! and will fill with a medium to high number of elements.
+//!   and will fill with a medium to high number of elements.
 //! - [`OrderedSet`], useful when you want set-like operations and need a defined order of elements, or you
-//! plan to iterate over the contained elements more frequently than do random access lookup on them.
+//!   plan to iterate over the contained elements more frequently than do random access lookup on them.
 //!
 //! # Usage table
 //!
