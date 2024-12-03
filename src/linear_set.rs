@@ -772,7 +772,7 @@ impl<T: Eq + Clone, const N: usize> From<[T; N]> for LinearSet<T> {
     }
 }
 
-impl<'a, 'b, T> BitOr<&'b LinearSet<T>> for &'a LinearSet<T>
+impl<T> BitOr<&LinearSet<T>> for &LinearSet<T>
 where
     T: Eq + Clone,
 {
@@ -803,7 +803,7 @@ where
     }
 }
 
-impl<'a, 'b, T> BitAnd<&'b LinearSet<T>> for &'a LinearSet<T>
+impl<T> BitAnd<&LinearSet<T>> for &LinearSet<T>
 where
     T: Eq + Clone,
 {
@@ -834,7 +834,7 @@ where
     }
 }
 
-impl<'a, 'b, T> BitXor<&'b LinearSet<T>> for &'a LinearSet<T>
+impl<T> BitXor<&LinearSet<T>> for &LinearSet<T>
 where
     T: Eq + Clone,
 {
@@ -865,7 +865,7 @@ where
     }
 }
 
-impl<'a, 'b, T> Sub<&'b LinearSet<T>> for &'a LinearSet<T>
+impl<T> Sub<&LinearSet<T>> for &LinearSet<T>
 where
     T: Eq + Clone,
 {
@@ -997,7 +997,7 @@ where
     }
 }
 
-impl<'a, K> Clone for Iter<'a, K> {
+impl<K> Clone for Iter<'_, K> {
     #[inline]
     fn clone(&self) -> Self {
         Iter {
@@ -1017,7 +1017,7 @@ impl<'a, K> Iterator for Iter<'a, K> {
         self.iter.size_hint()
     }
 }
-impl<'a, K> ExactSizeIterator for Iter<'a, K> {
+impl<K> ExactSizeIterator for Iter<'_, K> {
     #[inline]
     fn len(&self) -> usize {
         self.iter.len()
@@ -1036,7 +1036,7 @@ impl<'a, K> Iterator for IterUncheckedMut<'a, K> {
         self.iter.size_hint()
     }
 }
-impl<'a, K> ExactSizeIterator for IterUncheckedMut<'a, K> {
+impl<K> ExactSizeIterator for IterUncheckedMut<'_, K> {
     #[inline]
     fn len(&self) -> usize {
         self.iter.len()
@@ -1062,7 +1062,7 @@ impl<K> ExactSizeIterator for IntoIter<K> {
     }
 }
 
-impl<'a, K> Iterator for Drain<'a, K> {
+impl<K> Iterator for Drain<'_, K> {
     type Item = K;
 
     #[inline]
@@ -1074,14 +1074,14 @@ impl<'a, K> Iterator for Drain<'a, K> {
         self.iter.size_hint()
     }
 }
-impl<'a, K> ExactSizeIterator for Drain<'a, K> {
+impl<K> ExactSizeIterator for Drain<'_, K> {
     #[inline]
     fn len(&self) -> usize {
         self.iter.len()
     }
 }
 
-impl<'a, T> Clone for Intersection<'a, T> {
+impl<T> Clone for Intersection<'_, T> {
     #[inline]
     fn clone(&self) -> Self {
         Intersection {
@@ -1118,7 +1118,7 @@ where
     }
 }
 
-impl<'a, T> Clone for Difference<'a, T> {
+impl<T> Clone for Difference<'_, T> {
     #[inline]
     fn clone(&self) -> Self {
         Difference {
@@ -1155,7 +1155,7 @@ where
     }
 }
 
-impl<'a, T> Clone for SymmetricDifference<'a, T> {
+impl<T> Clone for SymmetricDifference<'_, T> {
     #[inline]
     fn clone(&self) -> Self {
         SymmetricDifference {
@@ -1180,7 +1180,7 @@ where
     }
 }
 
-impl<'a, T> Clone for Union<'a, T> {
+impl<T> Clone for Union<'_, T> {
     #[inline]
     fn clone(&self) -> Self {
         Union {

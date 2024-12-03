@@ -916,7 +916,7 @@ impl_iter! {Keys<'a,K,V>,  &'a K,  |e| e.0 }
 impl_iter! {Values<'a,K,V>,  &'a V,  |e| e.1 }
 impl_iter! {ValuesMut<'a,K,V>,  &'a mut V,  |e| &mut e.1 }
 
-impl<'a, K, V> Clone for Iter<'a, K, V> {
+impl<K, V> Clone for Iter<'_, K, V> {
     fn clone(&self) -> Self {
         Iter {
             iter: self.iter.clone(),
@@ -924,7 +924,7 @@ impl<'a, K, V> Clone for Iter<'a, K, V> {
     }
 }
 
-impl<'a, K, V> Clone for Keys<'a, K, V> {
+impl<K, V> Clone for Keys<'_, K, V> {
     #[inline]
     fn clone(&self) -> Self {
         Keys {
@@ -933,7 +933,7 @@ impl<'a, K, V> Clone for Keys<'a, K, V> {
     }
 }
 
-impl<'a, K, V> Clone for Values<'a, K, V> {
+impl<K, V> Clone for Values<'_, K, V> {
     #[inline]
     fn clone(&self) -> Self {
         Values {
