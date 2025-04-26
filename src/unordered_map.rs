@@ -19,8 +19,6 @@ pub use std::collections::hash_map::Keys;
 pub use std::collections::hash_map::Values;
 pub use std::collections::hash_map::ValuesMut;
 
-use crate::STATIC_RANDOM_STATE;
-
 /// A key-to-value map that does not have a specified order of contained elements.
 ///
 /// It is a good choice to use this map if you plan to do insertion, removal, and lookup by key significantly
@@ -42,11 +40,11 @@ use crate::STATIC_RANDOM_STATE;
 ///
 /// [`OrderedMap`]: crate::OrderedMap
 /// [lexographical]: core::cmp::Ord#lexographical-comparison
-pub struct UnorderedMap<K, V, S = ahash::RandomState> {
+pub struct UnorderedMap<K, V, S = crate::BuildHasher> {
     pub(crate) inner: HashMap<K, V, S>,
 }
 
-impl<K, V> UnorderedMap<K, V, ahash::RandomState> {
+impl<K, V> UnorderedMap<K, V, crate::BuildHasher> {
     /// [`HashMap::new`] but using an [`ahash`] hasher.
     #[inline]
     pub fn new() -> Self {
@@ -56,7 +54,7 @@ impl<K, V> UnorderedMap<K, V, ahash::RandomState> {
     /// [`HashMap::with_capacity`] but using an [`ahash`] hasher.
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        Self::with_capacity_and_hasher(capacity, ahash::RandomState::default())
+        Self::with_capacity_and_hasher(capacity, crate::BuildHasher::default())
     }
 }
 
@@ -182,13 +180,13 @@ impl<K, V, S> UnorderedMap<K, V, S> {
     }
 }
 
-impl<K, V, const N: usize> From<[(K, V); N]> for UnorderedMap<K, V, ahash::RandomState>
+impl<K, V, const N: usize> From<[(K, V); N]> for UnorderedMap<K, V, crate::BuildHasher>
 where
     K: Hash + Eq,
 {
     fn from(arr: [(K, V); N]) -> Self {
         Self {
-            inner: HashMap::<K, V, ahash::RandomState>::from_iter(arr),
+            inner: HashMap::<K, V, crate::BuildHasher>::from_iter(arr),
         }
     }
 }
@@ -441,7 +439,7 @@ where
         // also have this semantics that as long as the elements are equal the maps are equal.
         let mut hash = 0u64;
         for elt in self.inner.iter() {
-            let elt_hash = STATIC_RANDOM_STATE.hash_one(elt);
+            let elt_hash = crate::hash_one_fixed(elt);
             hash ^= elt_hash;
         }
         state.write_u64(hash);

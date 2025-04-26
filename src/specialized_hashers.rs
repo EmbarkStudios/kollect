@@ -2,11 +2,13 @@ use core::hash::BuildHasher;
 use core::hash::Hasher;
 use core::marker::PhantomData;
 
+pub type BuildFixedHasher = foldhash::fast::FixedState;
+
 /// A [`BuildHasher`] that builds a hasher specialized in hashing small keys containing
 /// only primitive types. The exact hasher implementation provided by this [`BuildHasher`]
 /// may change over time if better algorithms are discovered or implemented.
 #[allow(missing_debug_implementations)]
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone)]
 pub struct BuildPrimitiveHasher;
 
 impl BuildHasher for BuildPrimitiveHasher {

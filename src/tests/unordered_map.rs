@@ -1,5 +1,5 @@
 use crate::UnorderedMap;
-use crate::STATIC_RANDOM_STATE;
+use crate::hash_one_fixed;
 
 #[test]
 fn eq_order_independent() {
@@ -70,9 +70,9 @@ fn hash_order_independent() {
         ("a", Foo("value 0", 0)),
     ]);
 
-    let a_hash = STATIC_RANDOM_STATE.hash_one(a_map);
-    let b_hash = STATIC_RANDOM_STATE.hash_one(b_map);
-    let c_hash = STATIC_RANDOM_STATE.hash_one(c_map);
+    let a_hash = hash_one_fixed(&a_map);
+    let b_hash = hash_one_fixed(&b_map);
+    let c_hash = hash_one_fixed(&c_map);
 
     assert_eq!(a_hash, c_hash);
     assert_eq!(b_hash, c_hash);
@@ -115,9 +115,9 @@ fn eq_hash_equivalence() {
     assert_eq!(&b_map, &c_map);
     assert_eq!(&a_map, &c_map);
 
-    let a_hash = STATIC_RANDOM_STATE.hash_one(&a_map);
-    let b_hash = STATIC_RANDOM_STATE.hash_one(&b_map);
-    let c_hash = STATIC_RANDOM_STATE.hash_one(&c_map);
+    let a_hash = hash_one_fixed(&a_map);
+    let b_hash = hash_one_fixed(&b_map);
+    let c_hash = hash_one_fixed(&c_map);
 
     assert_eq!(a_hash, c_hash);
     assert_eq!(b_hash, c_hash);

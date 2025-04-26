@@ -68,8 +68,13 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
+use core::hash::Hash;
+
 use specialized_hashers::BuildNoHashHasher;
 use specialized_hashers::BuildPrimitiveHasher;
+
+/// The default hasher used by hash-based collections in this crate.
+pub type BuildHasher = foldhash::fast::RandomState;
 
 /// Provides a fast, general purpose, key-value map with **no** defined order of elements
 pub mod unordered_map;
@@ -139,12 +144,27 @@ mod tests;
 #[macro_use]
 mod internal_macros;
 
-pub(crate) static STATIC_RANDOM_STATE: ahash::RandomState = ahash::RandomState::with_seeds(
-    0x86c11a44c63f4f2f,
-    0xaf04d821054d02b3,
-    0x98f0a276c462acc1,
-    0xe2d6368e09c9c079,
-);
+const STATIC_RANDOM_SEED: u64 = 0x86c11a44c63f4f2f;
+
+pub static FIXED_BUILD_HASHER: foldhash::fast::FixedState =
+    foldhash::fast::FixedState::with_seed(STATIC_RANDOM_SEED);
+
+#[inline(always)]
+pub fn get_fixed_hasher() -> foldhash::fast::FoldHasher {
+    use core::hash::BuildHasher;
+    FIXED_BUILD_HASHER.build_hasher()
+}
+
+#[inline(always)]
+pub fn hash_one_fixed<H: Hash>(one: H) -> u64 {
+    use core::hash::Hasher;
+    let mut hasher = foldhash::fast::FoldHasher::with_seed(
+        STATIC_RANDOM_SEED,
+        foldhash::SharedSeed::global_fixed(),
+    );
+    one.hash(&mut hasher);
+    hasher.finish()
+}
 
 #[cold]
 #[inline(never)]

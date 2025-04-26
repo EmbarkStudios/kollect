@@ -40,11 +40,11 @@ pub use indexmap::set::Union;
 /// [`UnorderedSet`]: crate::UnorderedSet
 /// [`LinearSet`]: crate::LinearSet
 /// [lexographical]: core::cmp::Ord#lexographical-comparison
-pub struct OrderedSet<T, S = ahash::RandomState> {
+pub struct OrderedSet<T, S = crate::BuildHasher> {
     pub(crate) inner: IndexSet<T, S>,
 }
 
-impl<T> OrderedSet<T, ahash::RandomState> {
+impl<T> OrderedSet<T, crate::BuildHasher> {
     /// [`IndexSet::new`] but using an [`ahash`] hasher.
     #[inline]
     pub fn new() -> Self {
@@ -54,7 +54,7 @@ impl<T> OrderedSet<T, ahash::RandomState> {
     /// [`IndexSet::with_capacity`] but using an [`ahash`] hasher.
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        Self::with_capacity_and_hasher(capacity, ahash::RandomState::default())
+        Self::with_capacity_and_hasher(capacity, crate::BuildHasher::default())
     }
 }
 
@@ -138,13 +138,13 @@ impl<T, S> OrderedSet<T, S> {
     }
 }
 
-impl<T, const N: usize> From<[T; N]> for OrderedSet<T, ahash::RandomState>
+impl<T, const N: usize> From<[T; N]> for OrderedSet<T, crate::BuildHasher>
 where
     T: Hash + Eq,
 {
     fn from(arr: [T; N]) -> Self {
         Self {
-            inner: IndexSet::<T, ahash::RandomState>::from_iter(arr),
+            inner: IndexSet::<T, crate::BuildHasher>::from_iter(arr),
         }
     }
 }

@@ -42,11 +42,11 @@ pub use indexmap::map::ValuesMut;
 ///
 /// [`UnorderedMap`]: crate::UnorderedMap
 /// [lexographical]: core::cmp::Ord#lexographical-comparison
-pub struct OrderedMap<K, V, S = ahash::RandomState> {
+pub struct OrderedMap<K, V, S = crate::BuildHasher> {
     pub(crate) inner: IndexMap<K, V, S>,
 }
 
-impl<K, V> OrderedMap<K, V, ahash::RandomState> {
+impl<K, V> OrderedMap<K, V, crate::BuildHasher> {
     /// [`IndexMap::new`] but using an [`ahash`] hasher.
     #[inline]
     pub fn new() -> Self {
@@ -56,7 +56,7 @@ impl<K, V> OrderedMap<K, V, ahash::RandomState> {
     /// [`IndexMap::with_capacity`] but using an [`ahash`] hasher.
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        Self::with_capacity_and_hasher(capacity, ahash::RandomState::default())
+        Self::with_capacity_and_hasher(capacity, crate::BuildHasher::default())
     }
 }
 
@@ -176,13 +176,13 @@ impl<K, V, S> OrderedMap<K, V, S> {
     }
 }
 
-impl<K, V, const N: usize> From<[(K, V); N]> for OrderedMap<K, V, ahash::RandomState>
+impl<K, V, const N: usize> From<[(K, V); N]> for OrderedMap<K, V, crate::BuildHasher>
 where
     K: Hash + Eq,
 {
     fn from(arr: [(K, V); N]) -> Self {
         Self {
-            inner: IndexMap::<K, V, ahash::RandomState>::from_iter(arr),
+            inner: IndexMap::<K, V, crate::BuildHasher>::from_iter(arr),
         }
     }
 }

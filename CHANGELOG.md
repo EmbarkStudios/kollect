@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 - `LinearMap::new` and `LinearSet::new` are now `const`
+- Now uses `foldhash` instead of `ahash` as default hasher.
 
 ## `0.4.1`
 

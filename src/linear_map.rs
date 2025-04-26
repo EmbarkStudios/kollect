@@ -15,8 +15,6 @@ use std::ops;
 use std::slice;
 use std::vec;
 
-use crate::STATIC_RANDOM_STATE;
-
 use self::Entry::Occupied;
 use self::Entry::Vacant;
 
@@ -601,7 +599,7 @@ where
         // also have this semantics that as long as the elements are equal the maps are equal.
         let mut hash = 0u64;
         for elt in self.storage.iter() {
-            let elt_hash = STATIC_RANDOM_STATE.hash_one(elt);
+            let elt_hash = crate::hash_one_fixed(elt);
             hash ^= elt_hash;
         }
         state.write_u64(hash);

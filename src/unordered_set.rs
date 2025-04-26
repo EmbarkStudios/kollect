@@ -15,7 +15,7 @@ pub use std::collections::hash_set::Iter;
 pub use std::collections::hash_set::SymmetricDifference;
 pub use std::collections::hash_set::Union;
 
-use crate::STATIC_RANDOM_STATE;
+use crate::hash_one_fixed;
 
 /// A deduplicated set that does not have a specified order of contained elements.
 ///
@@ -40,21 +40,21 @@ use crate::STATIC_RANDOM_STATE;
 /// [`OrderedSet`]: crate::OrderedSet
 /// [`LinearSet`]: crate::LinearSet
 /// [lexographical]: core::cmp::Ord#lexographical-comparison
-pub struct UnorderedSet<T, S = ahash::RandomState> {
+pub struct UnorderedSet<T, S = crate::BuildHasher> {
     pub(crate) inner: HashSet<T, S>,
 }
 
-impl<T> UnorderedSet<T, ahash::RandomState> {
-    /// [`HashSet::new`] but using an [`ahash`] hasher.
+impl<T> UnorderedSet<T, crate::BuildHasher> {
+    /// [`HashSet::new`] but using an [`foldhash`] hasher.
     #[inline]
     pub fn new() -> Self {
         Self::default()
     }
 
-    /// [`HashSet::with_capacity`] but using an [`ahash`] hasher.
+    /// [`HashSet::with_capacity`] but using an [`foldhash`] hasher.
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        Self::with_capacity_and_hasher(capacity, ahash::RandomState::default())
+        Self::with_capacity_and_hasher(capacity, crate::BuildHasher::default())
     }
 }
 
@@ -144,13 +144,13 @@ impl<T, S> UnorderedSet<T, S> {
     }
 }
 
-impl<T, const N: usize> From<[T; N]> for UnorderedSet<T, ahash::RandomState>
+impl<T, const N: usize> From<[T; N]> for UnorderedSet<T, crate::BuildHasher>
 where
     T: Hash + Eq,
 {
     fn from(arr: [T; N]) -> Self {
         Self {
-            inner: HashSet::<T, ahash::RandomState>::from_iter(arr),
+            inner: HashSet::<T, crate::BuildHasher>::from_iter(arr),
         }
     }
 }
@@ -417,7 +417,7 @@ where
         // also have this semantics that as long as the elements are equal the sets are equal.
         let mut hash = 0u64;
         for elt in self.inner.iter() {
-            let elt_hash = STATIC_RANDOM_STATE.hash_one(elt);
+            let elt_hash = hash_one_fixed(elt);
             hash ^= elt_hash;
         }
         state.write_u64(hash);
