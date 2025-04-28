@@ -7,10 +7,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!-- next-header -->
 ## Unreleased
 
 - `LinearMap::new` and `LinearSet::new` are now `const`
-- Now uses `foldhash` instead of `ahash` as default hasher.
+- Uses `foldhash` instead of `ahash` as default hasher.
 
 ## `0.4.1`
 
