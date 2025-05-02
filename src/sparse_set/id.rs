@@ -193,7 +193,7 @@ const _: () = {
 
         /// # Safety
         ///
-        /// must ensure version in the given RawId is nonzero
+        /// must ensure version in the given `RawId` is nonzero
         #[inline]
         unsafe fn get_version_unchecked(raw: RawId) -> NonZeroU32 {
             // SAFETY: version being nonzero is checked at construction time
@@ -290,7 +290,7 @@ pub struct IdAllocator<T> {
     // Are we running as a server or in client/standalone mode.
     is_server: bool,
 
-    _phantom: PhantomData<fn() -> T>
+    _phantom: PhantomData<fn() -> T>,
 }
 
 impl<T: SetId> IdAllocator<T> {
@@ -315,9 +315,11 @@ impl<T: SetId> IdAllocator<T> {
     ///
     /// Reuses previously freed slots, then allocates new ones if there are no free slots available
     pub fn allocate(&mut self) -> T {
-        let entity_id = if let Some(free_idx) = self.free.pop() {
+        if let Some(free_idx) = self.free.pop() {
             let slot_version = &mut self.slots[free_idx as usize];
-            let new_version = (*slot_version).checked_add(1).expect("version shouldnt overflow");
+            let new_version = (*slot_version)
+                .checked_add(1)
+                .expect("version shouldnt overflow");
             assert!(new_version.get() != 0xffff_ffff);
             *slot_version = new_version;
 
@@ -328,7 +330,8 @@ impl<T: SetId> IdAllocator<T> {
             };
 
             // SAFETY: version is nonzero
-            let raw = unsafe { RawId::new_unchecked(((new_version as u64) << 32) | free_idx as u64) };
+            let raw =
+                unsafe { RawId::new_unchecked(((new_version as u64) << 32) | free_idx as u64) };
 
             T::from_raw(raw)
         } else {
@@ -343,9 +346,7 @@ impl<T: SetId> IdAllocator<T> {
             let raw = unsafe { RawId::new_unchecked(((version as u64) << 32) | idx as u64) };
 
             T::from_raw(raw)
-        };
-
-        entity_id
+        }
     }
 
     /// Remove an id. Returns true if successfully removed, false if the id didn't exist so didn't
@@ -354,7 +355,7 @@ impl<T: SetId> IdAllocator<T> {
         let version = id.version();
         let index = id.index();
 
-        if let Some(slot) = self.slots.get_mut(index as usize) {
+        if let Some(slot) = self.slots.get_mut(index) {
             if slot.get() & 0x7FFF_FFFF == version.get() {
                 self.free.push(index as u32);
                 true
@@ -370,7 +371,7 @@ impl<T: SetId> IdAllocator<T> {
     pub fn contains(&self, id: T) -> bool {
         let version = id.version();
         let index = id.index();
-        self.slots.get(index as usize).copied() == Some(version)
+        self.slots.get(index).copied() == Some(version)
     }
 
     /// Removes all currently allocated ids, leaving empty slots in their place.

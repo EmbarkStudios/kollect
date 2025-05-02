@@ -3,14 +3,14 @@ use std::cell::UnsafeCell;
 use std::num::NonZeroU32;
 use std::num::NonZeroUsize;
 
-use crate::specialized_hashers::BuildPrimitiveHasher;
 use crate::UnorderedPrimitiveMap;
+use crate::specialized_hashers::BuildPrimitiveHasher;
 
-pub mod networked_set;
 pub mod id;
+pub mod networked_set;
 
-pub use id::SetId;
 pub use id::RawId;
+pub use id::SetId;
 
 /// Iterator over all `id`s and values in the set.
 pub struct SparseSetIter<'a, K: SetId, V> {
@@ -166,7 +166,8 @@ where
             (std::marker::PhantomData<K>, std::marker::PhantomData<V>),
         );
 
-        impl<'de, K: SetId + serde::Deserialize<'de>, V> serde::de::Visitor<'de> for TypedSparseSetVisitor<K, V>
+        impl<'de, K: SetId + serde::Deserialize<'de>, V> serde::de::Visitor<'de>
+            for TypedSparseSetVisitor<K, V>
         where
             V: serde::Deserialize<'de>,
         {
@@ -254,18 +255,21 @@ impl<K: SetId, T: Clone> Clone for TypedSparseSet<K, T> {
         // as T so it should be safe to convert inbetween these representations.
         let data: &Vec<T> = unsafe {
             let data_ref: &Vec<_> = &*self.data.get();
-            std::mem::transmute(data_ref)
+            std::mem::transmute::<&Vec<UnsafeCell<T>>, &Vec<T>>(data_ref)
         };
         let data_clone = data.clone();
+        // SAFETY: These accesses are guaranteed safe under normal borrowing rules.
+        // The only way to break it would be misuse of unsafe methods to get mutable refs through a
+        // shared ref.
         unsafe {
-            // SAFETY: These accesses are guaranteed safe under normal borrowing rules.
-            // The only way to break it would be misuse of unsafe methods to get mutable refs through a shared ref.
             Self {
                 sparse: UnsafeCell::new((*self.sparse.get()).clone()),
                 dense: UnsafeCell::new((*self.dense.get()).clone()),
                 // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
                 // as T so it should be safe to convert inbetween these representations.
-                data: UnsafeCell::new(std::mem::transmute(data_clone)),
+                data: UnsafeCell::new(std::mem::transmute::<Vec<T>, Vec<UnsafeCell<T>>>(
+                    data_clone,
+                )),
             }
         }
     }
@@ -670,10 +674,7 @@ impl SparseIndirectionTable {
     unsafe fn bump_version_unchecked(&mut self, id: impl SetId) {
         // SAFETY: same as function level safety
         unsafe {
-            self.values
-                .get_mut(&id.index())
-                .unwrap_unchecked()
-                .version = Some(id.version());
+            self.values.get_mut(&id.index()).unwrap_unchecked().version = Some(id.version());
         }
     }
 
@@ -755,9 +756,9 @@ fn min_size_hint(a: (usize, Option<usize>), b: (usize, Option<usize>)) -> (usize
 
 #[cfg(test)]
 mod test {
-    use crate::define_id;
-    use super::id::IdAllocator;
     use super::TypedSparseSet;
+    use super::id::IdAllocator;
+    use crate::define_id;
 
     define_id! {
         #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
@@ -884,13 +885,13 @@ mod test {
         let data1 = MyData { value: 0xfefefefe };
         let data2 = MyData { value: 0xdeadbeef };
 
-        set_a.insert(entity_1, data1.clone());
+        set_a.insert(entity_1, data1);
         set_b.insert(entity_1, str1.clone());
 
         assert_eq!(set_a.get(entity_1), Some(&data1));
         assert_eq!(set_b.get(entity_1), Some(&str1));
 
-        set_a.insert(entity_2, data2.clone());
+        set_a.insert(entity_2, data2);
 
         assert_eq!(set_a.get(entity_2), Some(&data2));
         assert_eq!(set_b.get(entity_2), None);
