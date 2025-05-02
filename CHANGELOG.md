@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-header -->
 ## Unreleased
+
+- Adds sparse set + id implementation
+    - Adds `TypedSparseSet`, the main sparse set implementation + `NetworkedSet` which combines two
+    sparse sets with the same id type but different key spaces for the case of client + server
+    replication
+    - Adds `IdAllocator` for allocating ids into `TypedSparseSet`/`NetworkedSet`
+    - Adds `SetId` trait + `define_id!` macro to create your own id types
+
 ## `0.5.0`
 
 - `LinearMap::new` and `LinearSet::new` are now `const`

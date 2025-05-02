@@ -45,8 +45,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo fetch
       - name: cargo test build
-        run: cargo build --tests
-      - run: cargo test
+        run: cargo build --tests --all-features
+      - run: cargo test --all-features
 
   publish-check:
     name: Publish Check
