@@ -134,7 +134,9 @@ where
         let sparse_ref = unsafe { &*self.sparse.get() };
         let dense_ref = unsafe { &*self.dense.get() };
         let data_ref = unsafe { &*self.data.get() };
-        let data_ref: &Vec<V> = unsafe { std::mem::transmute(data_ref) };
+        // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
+        // as T so it should be safe to convert inbetween these representations.
+        let data_ref: &Vec<V> = unsafe { std::mem::transmute::<&Vec<UnsafeCell<V>>, &Vec<V>>(data_ref) };
 
         let mut state = serializer.serialize_struct("TypedSparseSet", 3)?;
         state.serialize_field("sparse", &sparse_ref)?;
@@ -190,7 +192,9 @@ where
                 let data: Vec<V> = seq
                     .next_element()?
                     .ok_or_else(|| serde::de::Error::invalid_length(2, &self))?;
-                let data = unsafe { std::mem::transmute(data) };
+                // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
+                // as T so it should be safe to convert inbetween these representations.
+                let data = unsafe { std::mem::transmute::<Vec<V>, Vec<UnsafeCell<V>>>(data) };
 
                 Ok(TypedSparseSet {
                     sparse: UnsafeCell::new(sparse),
@@ -225,7 +229,9 @@ where
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
                             let data_tmp: Vec<V> = map.next_value()?;
-                            data = Some(unsafe { std::mem::transmute(data_tmp) });
+                            // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
+                            // as T so it should be safe to convert inbetween these representations.
+                            data = Some(unsafe { std::mem::transmute::<Vec<V>, Vec<UnsafeCell<V>>>(data_tmp) });
                         }
                     }
                 }
