@@ -136,7 +136,8 @@ where
         let data_ref = unsafe { &*self.data.get() };
         // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
         // as T so it should be safe to convert inbetween these representations.
-        let data_ref: &Vec<V> = unsafe { std::mem::transmute::<&Vec<UnsafeCell<V>>, &Vec<V>>(data_ref) };
+        let data_ref: &Vec<V> =
+            unsafe { std::mem::transmute::<&Vec<UnsafeCell<V>>, &Vec<V>>(data_ref) };
 
         let mut state = serializer.serialize_struct("TypedSparseSet", 3)?;
         state.serialize_field("sparse", &sparse_ref)?;
@@ -231,7 +232,9 @@ where
                             let data_tmp: Vec<V> = map.next_value()?;
                             // SAFETY: Vec does not use niche optimizations and UnsafeCell has the same memory layout
                             // as T so it should be safe to convert inbetween these representations.
-                            data = Some(unsafe { std::mem::transmute::<Vec<V>, Vec<UnsafeCell<V>>>(data_tmp) });
+                            data = Some(unsafe {
+                                std::mem::transmute::<Vec<V>, Vec<UnsafeCell<V>>>(data_tmp)
+                            });
                         }
                     }
                 }
