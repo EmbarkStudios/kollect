@@ -119,6 +119,10 @@ pub mod linear_set;
 #[doc(inline)]
 pub use linear_set::LinearSet;
 
+/// Provides the foundations of a "generational arena" / ECS-like storage, performing efficient
+/// mapping from a large linear key space to densely packed data.
+pub mod sparse_set;
+
 /// Type-alias of [`UnorderedMap`] that is useful when you are using keys that are [`NoHashable`]
 pub type UnorderedNoHashMap<K, V> = UnorderedMap<K, V, BuildNoHashHasher<K>>;
 
